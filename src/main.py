@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 import pandas as pd
@@ -7,9 +8,33 @@ from src.data_loader import load_csv
 from src.reporter import create_cleaning_report, save_report
 
 
-INPUT_PATH = Path("data/raw/customers.csv")
-OUTPUT_PATH = Path("data/processed/customers_clean.csv")
-REPORT_PATH = Path("reports/cleaning_report.txt")
+def parse_arguments() -> argparse.Namespace:
+    """Read command-line arguments supplied by the user."""
+    parser = argparse.ArgumentParser(
+        description="Inspect and clean a CSV dataset."
+    )
+
+    parser.add_argument(
+        "input_file",
+        type=Path,
+        help="Path to the raw CSV file.",
+    )
+
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("data/processed/cleaned_data.csv"),
+        help="Path for the cleaned CSV file.",
+    )
+
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=Path("reports/cleaning_report.txt"),
+        help="Path for the cleaning report.",
+    )
+
+    return parser.parse_args()
 
 
 def print_basic_summary(data: pd.DataFrame) -> None:
@@ -37,8 +62,10 @@ def print_cleaning_summary(result: CleaningResult) -> None:
 
 def main() -> int:
     """Run the data inspection and cleaning workflow."""
+    arguments = parse_arguments()
+
     try:
-        raw_data = load_csv(INPUT_PATH)
+        raw_data = load_csv(arguments.input_file)
     except (FileNotFoundError, ValueError) as error:
         print(f"Error: {error}")
         return 1
@@ -46,20 +73,20 @@ def main() -> int:
     print_basic_summary(raw_data)
 
     result = clean_dataset(raw_data)
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    result.data.to_csv(OUTPUT_PATH, index=False)
+    arguments.output.parent.mkdir(parents=True, exist_ok=True)
+    result.data.to_csv(arguments.output, index=False)
 
     report_content = create_cleaning_report(
         original_data=raw_data,
         result=result,
-        input_path=INPUT_PATH,
-        output_path=OUTPUT_PATH,
+        input_path=arguments.input_file,
+        output_path=arguments.output,
     )
-    save_report(report_content, REPORT_PATH)
+    save_report(report_content, arguments.report)
 
     print_cleaning_summary(result)
-    print(f"\nCleaned file saved to: {OUTPUT_PATH}")
-    print(f"Report saved to: {REPORT_PATH}")
+    print(f"\nCleaned file saved to: {arguments.output}")
+    print(f"Report saved to: {arguments.report}")
     return 0
 
 
