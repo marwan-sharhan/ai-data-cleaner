@@ -4,10 +4,12 @@ import pandas as pd
 
 from src.cleaner import CleaningResult, clean_dataset
 from src.data_loader import load_csv
+from src.reporter import create_cleaning_report, save_report
 
 
 INPUT_PATH = Path("data/raw/customers.csv")
 OUTPUT_PATH = Path("data/processed/customers_clean.csv")
+REPORT_PATH = Path("reports/cleaning_report.txt")
 
 
 def print_basic_summary(data: pd.DataFrame) -> None:
@@ -47,8 +49,17 @@ def main() -> int:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     result.data.to_csv(OUTPUT_PATH, index=False)
 
+    report_content = create_cleaning_report(
+        original_data=raw_data,
+        result=result,
+        input_path=INPUT_PATH,
+        output_path=OUTPUT_PATH,
+    )
+    save_report(report_content, REPORT_PATH)
+
     print_cleaning_summary(result)
     print(f"\nCleaned file saved to: {OUTPUT_PATH}")
+    print(f"Report saved to: {REPORT_PATH}")
     return 0
 
 
