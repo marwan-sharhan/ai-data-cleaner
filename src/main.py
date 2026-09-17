@@ -10,9 +10,7 @@ from src.reporter import create_cleaning_report, save_report
 
 def parse_arguments() -> argparse.Namespace:
     """Read command-line arguments supplied by the user."""
-    parser = argparse.ArgumentParser(
-        description="Inspect and clean a CSV dataset."
-    )
+    parser = argparse.ArgumentParser(description="Inspect and clean a CSV dataset.")
 
     parser.add_argument(
         "input_file",

@@ -18,9 +18,7 @@ def test_clean_dataset_removes_duplicates_and_fills_missing_values() -> None:
     assert result.missing_values_filled == 2
     assert len(result.data) == 3
 
-    khaled_row = result.data.loc[
-        result.data["customer_id"] == 3
-    ].iloc[0]
+    khaled_row = result.data.loc[result.data["customer_id"] == 3].iloc[0]
 
     assert khaled_row["age"] == 25.0
     assert khaled_row["city"] == "Unknown"

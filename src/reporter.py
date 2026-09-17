@@ -15,9 +15,7 @@ def create_cleaning_report(
     missing_values = original_data.isna().sum()
 
     missing_lines = [
-        f"- {column}: {count}"
-        for column, count in missing_values.items()
-        if count > 0
+        f"- {column}: {count}" for column, count in missing_values.items() if count > 0
     ]
 
     if not missing_lines:
