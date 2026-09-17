@@ -6,6 +6,7 @@ import pandas as pd
 from src.cleaner import CleaningResult, clean_dataset
 from src.data_loader import load_csv
 from src.reporter import create_cleaning_report, save_report
+from src.validator import validate_dataset
 
 
 def parse_arguments() -> argparse.Namespace:
